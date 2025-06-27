@@ -2,47 +2,162 @@ html, body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    overflow-x: hidden; /* Important pour éviter les barres de défilement horizontales non désirées */
-    background: #05010a; /* Gardez ce style si vous voulez que le fond de l'iframe soit noir */
+    overflow-x: hidden; /* Empêche le défilement horizontal indésirable de la page conteneur */
+    background: #05010a; /* Fond pour l'iframe s'il n'y a pas de contenu ou si l'iframe est plus grand que le slider */
     color: #d5d5d5;
     font-family: 'Poppins', sans-serif;
 }
-*, *::before, *::after { box-sizing: inherit; }
+*, *::before, *::after {
+    box-sizing: inherit;
+}
 
+/* Styles du Wrapper Principal du Slider */
 .slider-wrapper {
     width: 100%;
-    aspect-ratio: 1920 / 720; /* Maintient le ratio pour la réactivité */
+    /* aspect-ratio est excellent pour le ratio de la section principale du slider */
+    aspect-ratio: 1920 / 720; /* Maintient le ratio pour la réactivité de l'image principale */
     background: #000;
-    max-height: 720px;
-    overflow: hidden;
+    max-height: 720px; /* Limite la hauteur sur les très grands écrans */
+    overflow: hidden; /* Cache tout débordement du contenu principal du slider */
 }
-.swiper { width: 100%; height: 100%; }
-.swiper-wrapper { height: 100%; display: flex; align-items: center; }
+
+/* Styles pour les instances Swiper */
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+.swiper-wrapper {
+    height: 100%;
+    display: flex;
+    align-items: center; /* Centre verticalement les slides */
+}
 .swiper-slide {
-    width: 100%; height: 100%;
-    display: flex; justify-content: center; align-items: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #000;
 }
 .swiper-slide img {
-    width: 100%; height: 100%; object-fit: cover; object-position: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* L'image remplit la slide sans déformation, rognant si nécessaire */
+    object-position: center; /* Centre l'image dans la slide */
 }
-.swiper-button-prev, .swiper-button-next {
-    color: white; top: 50%; width: 44px; height: 44px; margin-top: -22px;
-    background: rgba(0, 0, 0, 0.5); border-radius: 5px;
+
+/* Styles des Boutons de Navigation (Précédent/Suivant) */
+.swiper-button-prev,
+.swiper-button-next {
+    color: white;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    margin-top: -22px; /* Centre verticalement les boutons */
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    /* Assurez-vous que les flèches sont cliquables même si elles sont partiellement coupées */
+    z-index: 10;
 }
-.swiper-button-prev:hover, .swiper-button-next:hover {
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
     background: rgba(0, 0, 0, 0.8);
 }
+
+/* Styles des Miniatures (Thumbnails) */
 .slider-thumbnails {
-    margin: 10px auto; display: flex; justify-content: center;
-    align-items: center; gap: 5px; max-width: 400px;
+    margin: 10px auto; /* Marge au-dessus/dessous et centrage horizontal */
+    display: flex;
+    justify-content: center; /* Centre les miniatures horizontalement */
+    align-items: center;
+    gap: 5px; /* Espace entre les miniatures */
+    max-width: 400px; /* Limite la largeur du conteneur des miniatures */
+    /* Ajouter un overflow visible ou auto si la barre de défilement est souhaitée pour plus de 3 miniatures */
 }
+
+/* --- AJUSTEMENTS CLÉS POUR LES MINIATURES --- */
+/* Assurez-vous que le swiper lui-même dans les miniatures prend bien la taille de son parent */
+.slider-thumbnails .swiper {
+    width: 100%;
+    height: auto; /* La hauteur peut s'adapter au contenu si nécessaire, ou être fixée */
+    /* overflow: hidden; /* Optionnel: si des barres de défilement apparaissent sur le swiper miniature */
+}
+
+/* Styles pour chaque vignette individuelle (swiper-slide des miniatures) */
 .slider-thumbnails .swiper-slide {
-    width: 60px; height: 30px; opacity: 0.6; cursor: pointer; border: 2px solid transparent;
+    width: 60px; /* Largeur fixe souhaitée pour chaque miniature */
+    height: 30px; /* Hauteur fixe souhaitée pour chaque miniature */
+    opacity: 0.6;
+    cursor: pointer;
+    border: 2px solid transparent;
+    box-sizing: border-box; /* Inclure bordure et padding dans la taille */
+    overflow: hidden; /* TRÈS IMPORTANT : Cache toute partie de l'image qui dépasse de la vignette */
+    flex-shrink: 0; /* Empêche la miniature de rétrécir si l'espace est limité par d'autres éléments flex */
+    position: relative; /* Utile si des overlays ou des effets sont ajoutés plus tard */
 }
-.slider-thumbnails .swiper-slide-thumb-active {
-    opacity: 1; border-color: white;
-}
+/* Styles de l'image à l'intérieur de la vignette */
 .slider-thumbnails .swiper-slide img {
-    width: 100%; height: 100%; object-fit: cover;
+    width: 100%; /* L'image remplit 100% de la largeur de la vignette */
+    height: 100%; /* L'image remplit 100% de la hauteur de la vignette */
+    object-fit: cover; /* L'image couvre la vignette sans déformation, rognant si nécessaire */
+    object-position: center; /* Centre l'image dans la vignette */
+    display: block; /* Supprime les espaces blancs sous les images */
+}
+
+.slider-thumbnails .swiper-slide-thumb-active {
+    opacity: 1;
+    border-color: white; /* Bordure blanche pour la vignette active */
+}
+
+/* --- MEDIA QUERIES POUR LA RÉACTIVITÉ (Optionnel, mais recommandé pour un contrôle fin) --- */
+
+/* Pour les écrans de taille moyenne (tablettes et petits ordinateurs portables) */
+@media (max-width: 1024px) {
+    /* Pas de changements majeurs nécessaires si le design est déjà fluide */
+}
+
+/* Pour les écrans de petite taille (smartphones en paysage ou petits tablettes) */
+@media (max-width: 768px) {
+    /* Ajustements des boutons de navigation pour les rendre moins intrusifs sur mobile */
+    .swiper-button-prev,
+    .swiper-button-next {
+        width: 36px;
+        height: 36px;
+        margin-top: -18px;
+        font-size: 18px; /* Si vous utilisez des icônes de police */
+    }
+    /* Les miniatures peuvent avoir besoin d'être légèrement ajustées ou masquées si l'espace est très limité */
+    .slider-thumbnails {
+        margin: 5px auto;
+        gap: 3px;
+        max-width: 300px; /* Réduire la largeur max pour les petites écrans */
+    }
+    .slider-thumbnails .swiper-slide {
+        width: 50px;
+        height: 25px;
+    }
+}
+
+/* Pour les très petits écrans (smartphones en portrait) */
+@media (max-width: 480px) {
+    /* Les flèches peuvent être masquées si elles prennent trop de place */
+    /* .swiper-button-prev, .swiper-button-next { display: none; } */
+
+    /* Ou simplement réduites encore */
+    .swiper-button-prev,
+    .swiper-button-next {
+        width: 28px;
+        height: 28px;
+        margin-top: -14px;
+    }
+
+    /* Ajustement des miniatures pour les petits écrans */
+    .slider-thumbnails {
+        max-width: 90%; /* Prend 90% de la largeur disponible */
+        gap: 2px;
+    }
+    .slider-thumbnails .swiper-slide {
+        width: 40px;
+        height: 20px;
+    }
 }
